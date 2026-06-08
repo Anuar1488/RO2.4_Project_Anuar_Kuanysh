@@ -1,32 +1,32 @@
+using SchoolApp.Models;
+using SchoolApp.ViewModels;
 using SchoolApp_Anuar;
 
 namespace SchoolApp_Anuar;
 
 public partial class StudentsPage : ContentPage
 {
+    private readonly StudentsViewModel _vm;
+
     public StudentsPage()
     {
         InitializeComponent();
+        _vm = new StudentsViewModel();
+        BindingContext = _vm;
+    }
 
-        // Mock-данные. На L16 заменим на загрузку из БД.
-        StudentsList.ItemsSource = new[]
-        {
-            "Kuanysh Anuar",
-            "Salimov Alikhan",
-            "Mark Grayson",
-            "Maddison Harris",
-            "Ryan Thomas"
-        };
+    private void OnAddClicked(object sender, EventArgs e)
+    {
+        _vm.AddStudent();
     }
 
     private async void OnStudentSelected(object sender, SelectionChangedEventArgs e)
     {
-        if (e.CurrentSelection.FirstOrDefault() is not string name) return;
+        if (e.CurrentSelection.FirstOrDefault() is not Student student) return;
 
         await Shell.Current.GoToAsync(
-            $"{nameof(StudentDetailPage)}?name={Uri.EscapeDataString(name)}");
+            $"{nameof(StudentDetailPage)}?name={Uri.EscapeDataString(student.Name)}");
 
-        // Снимаем выделение, чтобы при возврате тот же студент снова реагировал на тап
         StudentsList.SelectedItem = null;
     }
 }
